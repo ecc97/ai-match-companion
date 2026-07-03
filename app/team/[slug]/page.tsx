@@ -22,7 +22,7 @@ export default async function TeamPage({ params }: PageProps<"/team/[slug]">) {
 
     if (!result) {
         return (
-            <main className="min-h-screen flex items-center justify-center px-4 text-white">
+            <main className="flex flex-col justify-center min-h-screen bg-teamMatchMain px-4 text-white">
                 <p className="text-neutral-400">No hay partidos disponibles para {team.name}.</p>
             </main>
         );
@@ -41,7 +41,7 @@ export default async function TeamPage({ params }: PageProps<"/team/[slug]">) {
             teamScore! > opponentScore! ? "text-emerald-400" : teamScore! < opponentScore! ? "text-red-400" : "text-neutral-400";
 
         return (
-            <main className="min-h-screen bg-neutral-950 text-white px-4 py-8">
+            <main className="flex flex-col justify-center min-h-screen bg-teamMatchMain text-white px-4 py-8">
                 <div className="max-w-md mx-auto space-y-4">
                     <p className="text-center text-neutral-500 text-sm uppercase tracking-wide">
                         Sin partidos próximos programados
@@ -79,7 +79,7 @@ export default async function TeamPage({ params }: PageProps<"/team/[slug]">) {
     });
 
     return (
-        <main className="min-h-screen bg-neutral-950 text-white px-4 py-8">
+        <main className="flex flex-col justify-center min-h-screen bg-teamMatchMain text-white px-4 py-8">
             <div className="max-w-md mx-auto space-y-4">
                 <div className="flex items-center justify-center gap-4">
                     <TeamCrest team={match.homeTeam} />

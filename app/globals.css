@@ -24,3 +24,25 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.bg-homeMain {
+  background-image: url('../public/assets/img/stadium-people-football.webp');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-color: rgba(50, 50, 50, 0.5);
+  background-blend-mode: multiply;
+  min-height: 100vh;
+}
+
+.bg-teamMatchMain {
+  background-image: url('../public/assets/img/stadium-cesped.webp');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-color: rgba(50, 50, 50, 0.5);
+  background-blend-mode: multiply;
+  min-height: 100vh;
+}
