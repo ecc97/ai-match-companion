@@ -3,8 +3,10 @@ import Groq from "groq-sdk";
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY! });
 
 export interface MatchIntelligence {
-    keyBattle: string;
+    keyBattlePlayer: string;
+    keyBattleContext: string;
     playerToWatch: string;
+    playerToWatchReason: string;
     story: string;
 }
 
@@ -31,8 +33,10 @@ Jugadores clave de ${context.homeTeam}: ${context.homeKeyPlayers.join(", ")}.
 
 Genera un JSON con estas claves exactas:
 {
-  "keyBattle": "duelo táctico clave en máximo 8 palabras",
+  "keyBattlePlayer": "nombre de UN jugador de ${context.homeTeam} de la lista dada",
+  "keyBattleContext": "descripción corta (máx 5 palabras) del reto que enfrenta, ej: 'mediocampo brasileño'",
   "playerToWatch": "nombre del jugador más determinante de ${context.homeTeam}",
+  "playerToWatchReason": "una frase corta (máx 12 palabras) explicando por qué",
   "story": "por qué este partido importa, 2-3 frases, tono narrativo"
 }`,
             },
@@ -43,6 +47,5 @@ Genera un JSON con estas claves exactas:
 
     const raw = completion.choices[0]?.message?.content;
     if (!raw) throw new Error("Groq no devolvió contenido");
-
     return JSON.parse(raw) as MatchIntelligence;
 }
