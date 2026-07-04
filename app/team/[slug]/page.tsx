@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { FEATURED_TEAMS, COMPETITION_CODE } from "@/config/matches.config";
@@ -8,6 +9,44 @@ import { PlayerAvatar } from "@/components/PlayerAvatar";
 
 export function generateStaticParams() {
     return FEATURED_TEAMS.map((t) => ({ slug: t.slug }));
+}
+
+export async function generateMetadata({
+    params,
+}: {
+    params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+    const { slug } = await params;
+    const teamConfig = FEATURED_TEAMS.find((t) => t.slug === slug);
+    if (!teamConfig) return {};
+
+    const title = `${teamConfig.displayName} — Análisis de Partidos con IA`;
+    const description = `Análisis inteligente del próximo partido de ${teamConfig.displayName}. Descubre las claves tácticas, jugadores a seguir y predicciones generadas por IA.`;
+
+    return {
+        title: teamConfig.displayName,
+        description,
+        openGraph: {
+            title,
+            description,
+            url: `/team/${slug}`,
+            images: [
+                {
+                    url: `https://flagcdn.com/w80/${teamConfig.flagCode}.png`,
+                    width: 80,
+                    height: 60,
+                    alt: `Bandera de ${teamConfig.displayName}`,
+                },
+            ],
+        },
+        twitter: {
+            title,
+            description,
+        },
+        alternates: {
+            canonical: `/team/${slug}`,
+        },
+    };
 }
 
 export default async function TeamPage({ params }: PageProps<"/team/[slug]">) {
@@ -40,8 +79,27 @@ export default async function TeamPage({ params }: PageProps<"/team/[slug]">) {
         const resultColor =
             teamScore! > opponentScore! ? "text-emerald-400" : teamScore! < opponentScore! ? "text-red-400" : "text-neutral-400";
 
+        const finishedJsonLd = {
+            "@context": "https://schema.org",
+            "@type": "SportsEvent",
+            name: `${match.homeTeam.name} vs ${match.awayTeam.name}`,
+            description: `Resultado del último partido de ${teamConfig.displayName}: ${match.homeTeam.name} ${teamScore} - ${opponentScore} ${match.awayTeam.name}`,
+            sport: "Soccer",
+            homeTeam: { "@type": "SportsTeam", name: match.homeTeam.name },
+            awayTeam: { "@type": "SportsTeam", name: match.awayTeam.name },
+            competitor: match.homeTeam.name,
+            startDate: match.utcDate,
+            location: { "@type": "StadiumOrArena", name: match.stage.replace("_", " ") },
+        };
+
         return (
             <main className="flex flex-col justify-center min-h-screen bg-teamMatchMain text-white px-4 py-8">
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                        __html: JSON.stringify(finishedJsonLd).replace(/</g, "\\u003c"),
+                    }}
+                />
                 <div className="max-w-md mx-auto space-y-4">
                     <p className="text-center text-neutral-500 text-sm uppercase tracking-wide">
                         Sin partidos próximos programados
@@ -78,8 +136,26 @@ export default async function TeamPage({ params }: PageProps<"/team/[slug]">) {
         stage: match.stage,
     });
 
+    const matchJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "SportsEvent",
+        name: `${match.homeTeam.name} vs ${match.awayTeam.name}`,
+        description: `Análisis IA del partido de ${teamConfig.displayName}: ${match.homeTeam.name} vs ${match.awayTeam.name}. Descubre jugadores clave, tácticas y predicciones.`,
+        sport: "Soccer",
+        homeTeam: { "@type": "SportsTeam", name: match.homeTeam.name },
+        awayTeam: { "@type": "SportsTeam", name: match.awayTeam.name },
+        startDate: match.utcDate,
+        location: { "@type": "StadiumOrArena", name: match.stage.replace("_", " ") },
+    };
+
     return (
         <main className="flex flex-col justify-center min-h-screen bg-teamMatchMain text-white px-4 py-8">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify(matchJsonLd).replace(/</g, "\\u003c"),
+                }}
+            />
             <div className="max-w-md mx-auto space-y-4">
                 <div className="flex items-center justify-center gap-4">
                     <TeamCrest team={match.homeTeam} />
