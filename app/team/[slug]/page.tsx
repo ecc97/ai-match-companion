@@ -49,6 +49,8 @@ export async function generateMetadata({
     };
 }
 
+export const dynamic = "force-dynamic";
+
 export default async function TeamPage({ params }: PageProps<"/team/[slug]">) {
     const { slug } = await params;
     const teamConfig = FEATURED_TEAMS.find((t) => t.slug === slug);
